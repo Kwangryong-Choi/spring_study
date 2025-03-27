@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="macbook_user">
+
+<!-- 
+parameterType : 다른 곳에서 mapper로 보내지는 데이터의 자료형, 다른 곳에서 받은 데이터의 자료형을 설정
+resultType : mapper에서 다른 곳으로 보내는 데이터의 자료형, 즉 쿼리문으로 mapper에서 뽑은 데이터의 자료형을 설정
+resultType="memberdto"  이것은 이 dto를 참고한 dto 자료형으로 설정한다는 뜻
+ -->
+
+<!-- 전체 데이터 출력 -->
+<select id="user_all" resultType="memberdto" parameterType="String">
+select * from macbook_member order by midx desc
+</select>
+
+<!-- 아이디 찾는 문법 -->
+<select id="search_userid" resultType="memberdto" parameterType="Map">
+select mid from macbook_member where mname=#{mname} and memail=#{memail}
+</select>
+
+<!-- DB Table이 다른 쿼리문 -->
+<!-- catein이라는 변수에 cate의 모든 값을 담아서 다시 처리했기 때문에 매개변수를 받을 쌔 catein 이라는 이름으로 사용해야 함 -->
+<insert id="cms_in" parameterType="Map">
+insert into macbook_cms (cidx,csubject,cuser,cate,cdate) 
+values ('0',#{csubject},#{cuser},#{catein},now())
+</insert>
+
+<select id="cms_views" resultType="Map"> <!-- DTO가 없을 경우 resultType으로 다른 자료형을 사용해야 함, 있을 경우 DTO 사용함 -->
+select * from macbook_cms where cidx='1' <!-- cidx가 있다는 가정 하에 cidx='1' 이걸 사용 원래는 cidx=#{cidx} -->
+<!-- select cuser from macbook_cms where cidx='1' -->
+</select>
+
+<!-- 배너 등록 테이블 -->
+<insert id="banner_new">
+insert into macbook_banner (bidx,bname,file_ori,file_new,file_url,bdate) 
+values ('0',#{bname},#{file_ori},#{file_new},#{file_url},now())
+</insert>
+
+<!-- 배너 전체 리스트 -->
+<select id="banner_all" resultType="banner_DTO">
+select * from macbook_banner order by bidx desc
+</select>
+
+</mapper>

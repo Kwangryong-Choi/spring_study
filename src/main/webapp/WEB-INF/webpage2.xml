@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- mvc가 기본엔진이 되었을 때   =>   Spring에서 기본으로 MVC형태로 코드를 작성하고, 실행이 됨 -->
+<beans:beans xmlns="http://www.springframework.org/schema/mvc" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context" 
+	xmlns:beans="http://www.springframework.org/schema/beans" 
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+						http://www.springframework.org/schema/beans/spring-beans.xsd 
+						http://www.springframework.org/schema/context 
+						http://www.springframework.org/schema/context/spring-context.xsd 
+						http://www.springframework.org/schema/mvc 
+						http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+	
+	<!-- @ 를 이용하여 각 class 별로 mvc 형태를 구현함 -->
+	<annotation-driven></annotation-driven>
+	
+	<!-- resources : 패키지를 정하여 설정하는 태그,  특정 패키지(location 으로)에 특정 Controller(mapping 으로)를 설정 -->
+	<resources location="/" mapping="/**"></resources>
+<!--<resources location="/" mapping="/**"></resources> -->
+	
+	<!-- View 형태를 어떤 형태의 파일로 보여지도록 할 것인지 환경설정 
+	prefix : jsp 파일을 모여있는 디렉토리를 설정
+	suffix : Controller에서 View 파일 속성을 설정할 수 있음
+	-->
+	<beans:bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<!-- value 경로에서 지정한 디렉토리 안에서만 View(jsp) 파일 사용할 수 있게 함 -->
+  		<beans:property name="prefix" value="/"></beans:property> 
+<!--	<beans:property name="prefix" value="/WEB-INF/admin/"></beans:property> -->
+<!--  	<beans:property name="prefix" value="/WEB-INF/"></beans:property> -->
+		<beans:property name="suffix" value=".jsp"></beans:property>
+	</beans:bean>
+	
+	<!-- Controller의 pakage 및 class명을 설정하여 작동시킴 -->
+	<!-- spring_learning 패키지 안의 mainpage 라는 이름의 클래스명을 Controller로 사용할 수 있게 함 -->
+	<!-- 
+	<beans:bean class="spring_learning.mainpage"></beans:bean>
+	<beans:bean class="spring_learning.mainpage2"></beans:bean>
+	<beans:bean class="spring_learning.mainpage3"></beans:bean>
+	<beans:bean class="spring_learning.macbook"></beans:bean>
+	 -->
+	 
+	 <!-- 
+	 context  :  전체 그룹을 관리하는 태그
+	 base-package란 Java Package를 말함,
+	 base-package속성으로 지정한 해당 패키지에 있는 모든 @을 사용할 수 있도록 오픈
+	 ,(콤마)를 통해 여러 개의 패키지를 지정할 수 있음 -->
+	<context:component-scan base-package="spring_learning,web_main,etc_model"/>
+	
+	
+	
+	
+	
+	<!-- Spring에서 I/O를 사용하기 위한 환경설정 -->
+	<!-- 
+		defaultEncoding : 파일명의 기본 언어셋
+		maxUploadSize : 최대 업로드 파일 크기 ( -1 : 무한용량, 용량제한 없음 )
+		maxInMemorySize : Tomcat에서 사용되는 메모리 사이즈를 말함 ( 파일 업로드 시 작동되는 메모리양 )
+	 -->
+	<beans:bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+	<beans:property name="defaultEncoding" value="UTF-8"/>
+	<beans:property name="maxUploadSize" value="-1"/> <!-- 최대 파일 업로드 용량 설정, value="-1" 일 경우 무한 용량 -->
+	<beans:property name="maxInMemorySize" value="2097152"/> <!-- 파일을 전송했을 때 파일을 얼만큼 사용할 것인지 정함, 메모리 사용량을 체크 => window => preference => general => heap status -->
+	</beans:bean>
+	
+</beans:beans>
