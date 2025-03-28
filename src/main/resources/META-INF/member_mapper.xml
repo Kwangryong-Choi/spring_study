@@ -39,7 +39,23 @@ values ('0',#{bname},#{file_ori},#{file_new},#{file_url},now())
 
 <!-- 배너 전체 리스트 -->
 <select id="banner_all" resultType="banner_DTO">
-select * from macbook_banner order by bidx desc
+select * from macbook_banner order by bidx desc limit #{spage},#{epage}
+</select>
+
+<!-- 배너에 대한 전체 데이터 개수 쿼리문 -->
+<select id="banner_total" resultType="int">
+select count(*) as total from macbook_banner
+</select>
+
+<!-- 
+mysql, mariaDB  =>  like concat('%',#{매개변수})  =>  요런 식으로 사용
+oracle  =>  like '%' || #{매개변수} || '%'   =>  요런 식으로 사용
+mssql  =>  like '%' + #{매개변수} + '%'
+ -->
+ 
+<!-- 생성한 배너 중 특정 단어가 들어간 배너 검색 -->
+<select id="banner_search" resultType="banner_DTO" parameterType="String">
+select * from macbook_banner where bname like concat('%',#{search},'%') order by bidx desc
 </select>
 
 </mapper>

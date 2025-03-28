@@ -14,6 +14,7 @@ import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -61,16 +62,42 @@ public class banner_controller {
 		}
 		
 		this.callback = this.dao.new_banner(dto);
-		System.out.println(this.callback);
+//		System.out.println(this.callback);
 
 		return null;
 	}
 	
-	
+	// 검색에 관련사항은 필수조건은 아니며, 또한 null 처리가 되었을 경우 defaultValue 값이 공백 처리
 	@GetMapping("/banner/bannerlist")
-	public String bannerlist(Model m) {
-		List<banner_DTO> all = this.dao.all_banner();
+	public String bannerlist(Model m, 
+			@RequestParam(name="search", defaultValue = "", required = false)String search, 
+			@RequestParam(defaultValue = "1", required = false)Integer pageno) {
+//		System.out.println(search);
+//		System.out.println(pageno);
+		
+		//데이터 총 갯수 확인 코드
+		int total = this.dao.banner_total();
+//		System.out.println(total);
+		
+		// 끝
+		int userpage = 0;
+		if(pageno == 1) {
+			userpage = 0;
+		}else {	// 1외의 페이지 번호 클릭 시
+			userpage = (pageno - 1) * 5;
+		}
+		// 해당 일련번호를 계산하여 jsp에 전달
+		m.addAttribute("userpage", userpage);
+		
+		List<banner_DTO> all = null;
+		if(search.intern() == "") {		// 검색어가 없을 경우
+			all = this.dao.all_banner(pageno);	// 인자값 : 사용자가 페이지 번호를 클릭한 값
+		}else {	// 검색어가 있을 경우
+			all = this.dao.search_banner(search);
+		}
+		m.addAttribute("search", search);	// 검색어를 jsp로 전달
 		m.addAttribute("all",all);
+		m.addAttribute("total", total);		// 데이터 전체 개수
 		
 		return null;
 	}
