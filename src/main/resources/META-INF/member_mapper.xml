@@ -58,4 +58,9 @@ mssql  =>  like '%' + #{매개변수} + '%'
 select * from macbook_banner where bname like concat('%',#{search},'%') order by bidx desc
 </select>
 
+<!-- 해당 배너 고유값으로 데이터 삭제 처리 -->
+<delete id="banner_del">
+delete from macbook_banner where bidx=#{no}
+</delete>
+
 </mapper>

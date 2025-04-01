@@ -101,4 +101,35 @@ public class banner_controller {
 		
 		return null;
 	}
+	
+	@PostMapping("/banner/bannerdel")
+	public String bannerdel(@RequestParam(defaultValue = "", required = false) String ckdel, Model m) {
+		String msg = "";
+		this.callback = 0;	// 초기화
+		if(ckdel.equals("")) {
+			msg = "alert('올바른 접근이 아닙니다.');"
+					+ "location.href='./bannerlist'";
+		}else {
+			String no[] = ckdel.split(",");
+			int w = 0;
+			while(w < no.length) {	// Front-end에서 체크된 값만큼 반복
+				int result = this.dao.banner_del(no[w]);
+				if(result > 0) {
+					this.callback++;
+				}
+				w++;
+			}
+			// -1을 사용한 이유는 반복문에 조건이 없으므로 +1이 작동될 수 있음
+			if(no.length == this.callback - 1) {
+				msg = "alert('정상적으로 삭제되었습니다.');"
+						+ "location.href='./bannerlist'";
+			}else {
+				msg = "alert('비정상적인 데이터가 확인되었습니다.');"
+						+ "location.href='./bannerlist'";
+			}
+			
+		}
+		m.addAttribute("msg", msg);
+		return "load";
+	}
 }

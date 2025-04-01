@@ -9,16 +9,6 @@
 <title>Insert title here</title>
 </head>
 <body>
-<script>
-function spage(){
-	if(sform.search.value==""){
-//		alert("배너명을 입력하세요.");
-		return false;
-	}else{
-		return;
-	}
-}
-</script>
 <form id="sform" method="get" action="./bannerlist" onsubmit="return spage()">
 <p>배너명 검색 : <input type="text" name="search" value="${search}">
 <input type="submit" value="검색">
@@ -29,7 +19,7 @@ function spage(){
 <table border="1" cellpadding="0" cellspacing="0" >
 <thead>
 	<tr>
-		<th><input type="checkbox"></th>
+		<th><input type="checkbox" id="allck" onclick="check_all(this.checked)"></th>
 		<th width="80">번호</th>
 		<th width="300">배너명</th>
 		<th width="100">이미지</th>
@@ -50,9 +40,12 @@ function spage(){
 
 <tbody>
 <cr:set var="ino" value="${total-userpage}"/>	<!-- 게시물 일련번호 셋팅 -->
+<form>
+<!-- foreach 즉 반복문 안에는 id를 쓰면 중복되므로 id 속성은 사용하면 안됨 -->
 <cr:forEach var="bn" items="${all}" varStatus="idx">
 <tr height="50">
-	<td><input type="checkbox"></td>
+	<!-- bidx : DB에서 사용된 auto_increment 값 -->
+	<td><input type="checkbox" name="ckbox" value="${bn.bname}"></td>
 	<td align="center">${ino-idx.index}</td>
 	<td>${bn.bname}</td>
 	<td>
@@ -67,6 +60,7 @@ function spage(){
 	<td>${fn:substring(bn.bdate,0,10)}</td>
 </tr>
 </cr:forEach>
+</form>
 </tbody>
 </table>
 <br><br>
@@ -91,15 +85,69 @@ function spage(){
 <br><br>
 
 <!-- form 전송으로 선택된 값을 삭제하는 프로세서 -->
-<form id="dform" action="">
-<input type="hidden">
+<form id="dform" action="./bannerdel">
+<input type="hidden" name="ckdel" value="1,3,5">
 </form>
-<input type="button" value="선택삭제">
-<script>
-	function pg(no){
-		location.href='./bannerlist?pageno='+no;
-	}
-</script>
-
+<input type="button" value="선택삭제" onclick="check_del()">
 </body>
+<script>
+function spage(){
+	if(sform.search.value==""){
+//		alert("배너명을 입력하세요.");
+		return false;
+	}else{
+		return;
+	}
+}
+
+function pg(no){
+	location.href='./bannerlist?pageno='+no;
+}
+
+// 전체 선택 관련 핸들링 함수
+function check_all(ck){
+	var ea = document.getElementsByName("ckbox");
+//	ea[0].checked = true;
+	
+	if(ck == true){		// 전체선택 했을 경우
+		var w = 0;
+		while(w < ea.length){
+			ea[w].checked = true;
+			w++;
+		}
+	}else{	// 전체선택을 해제할 경우
+		var w = 0;
+		while(w < ea.length){
+			ea[w].checked = false;
+			w++;
+	}
+	
+	// 조건문 없이 전체해제, 전체선택  =>  ck가 true or false 이기 때문에
+	/*
+	var w = 0;
+	while(w < ea.length){
+		ea[w].checked = ck;
+		w++;
+	}
+	}
+	*/
+}
+
+// 선택삭제 버튼 클릭 시 리스트에서 체크된 값을 확인 후 배열화하여 hidden으로 값을 적용하여 Back-end로 문자열로 전달 
+function check_del(){
+	var ar = new Array();	// script 배열
+	var ob = document.getElementsByName("ckbox");
+	var w = 0;
+	while(w < ob.length){
+		if(ob[w].checked == true){
+			ar.push(ob[w].value);
+		}
+		w++;
+	}
+	dform.ckdel.value = ar;
+	if(confirm("해당 데이터를 삭제 시 복구되지 않습니다.")){
+		dform.submit();
+	}
+}
+</script>
 </html>

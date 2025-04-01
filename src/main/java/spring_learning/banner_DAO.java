@@ -47,4 +47,10 @@ public class banner_DAO {
 		List<banner_DTO> all = this.st.selectList("macbook_user.banner_search", search);
 		return all;
 	}
+	
+	// 배너 삭제 메소드
+	public int banner_del(String no) {
+		int result = this.st.delete("macbook_user.banner_del",no);
+		return result;
+	}
 }
